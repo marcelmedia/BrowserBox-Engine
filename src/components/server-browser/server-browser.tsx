@@ -174,14 +174,14 @@ export function ServerBrowser({ onClose }: ServerBrowserProps) {
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="bg-black/40 backdrop-blur-md p-4 border-b border-white/10 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-blue-400">Server Browser</h2>
+        <div className="p-4 flex items-center justify-between bg-gradient-to-r from-blue-600/80 to-purple-600/80 border-b border-white/10">
+          <h2 className="text-2xl font-bold text-white">Server Browser</h2>
           <div className="flex gap-2">
             <Button 
               variant="outline" 
               size="icon"
               onClick={handleRefresh}
-              className="rounded-full bg-black/30 border-white/10 text-white hover:bg-blue-500/30 hover:border-white/20"
+              className="rounded-full bg-black/20 border-white/10 text-white hover:bg-white/20 hover:border-white/20"
             >
               <RefreshCw className={`h-5 w-5 ${isRefreshing ? 'animate-spin' : ''}`} />
             </Button>
@@ -189,7 +189,7 @@ export function ServerBrowser({ onClose }: ServerBrowserProps) {
               variant="outline" 
               size="icon"
               onClick={onClose}
-              className="rounded-full bg-black/30 border-white/10 text-white hover:bg-blue-500/30 hover:border-white/20"
+              className="rounded-full bg-black/20 border-white/10 text-white hover:bg-white/20 hover:border-white/20"
             >
               <X className="h-5 w-5" />
             </Button>

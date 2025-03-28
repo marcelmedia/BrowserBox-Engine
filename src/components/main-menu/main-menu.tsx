@@ -14,8 +14,8 @@ const BackgroundScene = dynamic(
   { ssr: false, loading: () => <LoaderMessage /> }
 );
 
-// Version number in the GMod format
-const VERSION = '0.0.1_prealpha_dev_280325_0230 - Made with ❤️ by MarcelMedia';
+// Build Version number
+const VERSION = '0.0.1_prealpha_dev_280325_0532 - Made with ❤️ by MarcelMedia';
 
 export function MainMenu() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);

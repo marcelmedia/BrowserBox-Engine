@@ -20,7 +20,7 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
   const [selectedType, setSelectedType] = useState<GameType>('singleplayer');
   const [showMultiplayerOptions, setShowMultiplayerOptions] = useState(false);
   const [serverSettings, setServerSettings] = useState({
-    name: "My Server",
+    name: "Server #1",
     maxPlayers: 8,
     visibility: "Public",
     password: ""
@@ -108,13 +108,13 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="bg-blue-600 p-4 flex items-center justify-between">
+        <div className="p-4 flex items-center justify-between bg-gradient-to-r from-blue-600/80 to-purple-600/80 border-b border-white/10">
           <h2 className="text-2xl font-bold text-white">Select Game Mode</h2>
           <Button 
             variant="outline" 
             size="icon"
             onClick={onClose}
-            className="rounded-full bg-blue-700/50 border-white/10 text-white hover:bg-blue-500/50 hover:border-white/20"
+            className="rounded-full bg-black/20 border-white/10 text-white hover:bg-white/20 hover:border-white/20"
           >
             <X className="h-5 w-5" />
           </Button>
@@ -213,7 +213,7 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
                         value={serverSettings.name}
                         onChange={(e) => handleServerSettingChange('name', e.target.value)}
                         className="w-full bg-black/30 border border-white/10 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                        placeholder="My Server"
+                        placeholder="Server #1"
                       />
                     </div>
                     
