@@ -174,7 +174,7 @@ export function ServerBrowser({ onClose }: ServerBrowserProps) {
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="p-4 flex items-center justify-between bg-gradient-to-r from-blue-600/80 to-purple-600/80 border-b border-white/10">
+        <div className="p-4 flex items-center justify-between bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-white/10">
           <h2 className="text-2xl font-bold text-white">Server Browser</h2>
           <div className="flex gap-2">
             <Button 

@@ -257,7 +257,7 @@ body {
   left: 0;
   height: 100%;
   width: var(--range-progress, 50%);
-  background: #3b82f6;
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
   border-radius: 4px;
   z-index: 1;
 }
@@ -268,25 +268,27 @@ body {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.9));
   border-radius: 50%;
   cursor: pointer;
   position: relative;
   z-index: 2;
   margin-top: -4px; /* Center the thumb on the track */
   box-sizing: border-box;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .game-slider::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #3b82f6;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(147, 51, 234, 0.9));
   border: none;
   border-radius: 50%;
   cursor: pointer;
   position: relative;
   z-index: 2;
   box-sizing: border-box;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Style the track */
@@ -308,7 +310,7 @@ body {
 /* Style the progress */
 .game-slider::-moz-range-progress {
   height: 8px;
-  background: #3b82f6;
+  background: linear-gradient(to right, rgba(59, 130, 246, 0.8), rgba(147, 51, 234, 0.8));
   border-radius: 4px;
   box-sizing: border-box;
 }
