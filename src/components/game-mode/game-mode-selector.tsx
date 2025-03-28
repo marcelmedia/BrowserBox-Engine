@@ -121,53 +121,112 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
         </div>
 
         {/* Modal Content */}
-        <div className="flex flex-grow overflow-auto">
+        <div className="flex flex-1 min-h-0">
           {/* Main Content */}
-          <div className="flex-grow p-6 overflow-y-auto">
-            {/* Game Modes - Only Sandbox */}
-            <div className="flex justify-center mb-8">
-              <motion.div
-                className={`game-mode-item p-6 rounded-lg border cursor-pointer transition-all max-w-xl ${
-                  selectedMode === 'sandbox' 
-                    ? 'bg-blue-500/20 border-blue-500/50 selected' 
-                    : 'bg-black/30 border-white/10 hover:bg-black/40 hover:border-white/20'
-                }`}
-                onClick={() => setSelectedMode('sandbox')}
-                whileHover={{ scale: 1.02, y: -5 }}
-                whileTap={{ scale: 0.98 }}
-                variants={itemVariants}
+          <div className="flex-1 flex flex-col min-h-0 p-6">
+            {/* Game Modes Container - Using flex and justify-center/items-center for initial centering */}
+            <div className={`flex-1 flex flex-col ${!selectedMode ? 'justify-center' : ''} transition-all duration-500`}>
+              {/* Game Modes */}
+              <motion.div 
+                className="flex justify-center gap-6 mb-8"
+                layout
+                transition={{
+                  layout: { duration: 0.5, ease: "easeInOut" }
+                }}
               >
-                <div className="flex flex-col items-center text-center">
-                  <div className="game-mode-icon w-24 h-24 rounded-full bg-black/50 flex items-center justify-center mb-5">
-                    <svg 
-                      className="w-12 h-12 text-white" 
-                      width="512" 
-                      height="512" 
-                      viewBox="0 0 512 512" 
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                    >
-                      <path d="m0 357.7227783 247 140v-120l-247-110zm512-89.981781-247 109.981781v120l247-139.4848328zm-56.8358154 10.1654663 38.7610168-17.1413269-85.0889282-32.2471313-7.8757324 21.2828522c15.5272522 6.8700408 34.0503235 16.6861724 54.2036438 28.105606zm-97.818573-263.6292543-16.092926 45.1839714c-3.5722656 12.4966965 2.8353271 31.6537094 23.4079895 35.6736603l-26.8122559 74.8105469c-21.792511-9.1030426-41.2434082-2.8312988-52.9347229 9.8306732l-29.3911591-11.2871399-237.4623966 92.2401437 38.6854248 16.8948059c63.5622597-37.8819122 138.7563324-64.0265045 210.7644806-59.8922424l-10.43573 28.0362244c-27.3458252.8110809-50.7308655 7.6781158-71.2333374 18.9524841 71.5344849-11.513092 146.0503845 7.610199 201.1564026 35.9378357-1.3308411-6.491394-4.9849548-12.3795471-11.0791931-18.2104187l19.4934082-55.2486572c5.8800964-15.7834625 1.237915-45.6482239-35.2806091-51.0641327l26.9246826-74.5845566c25.2302856 6.3505249 40.2459106-10.0839539 43.7929382-20.9614563l14.6986694-41.8628845zm50.25531 60.6137132c-.7280273 3.0333557-6.0735474 5.5181885-10.3134766 3.6400299l-26.3297119-7.4014206c-5.1257629-2.0163651-7.1122131-5.1521301-5.4601135-9.5854416l6.1880798-17.4722404 42.9526062 12.0121307z" />
-                    </svg>
+                <motion.div
+                  className={`game-mode-item p-6 rounded-lg border cursor-pointer transition-all w-[340px] ${
+                    selectedMode === 'sandbox' 
+                      ? 'bg-blue-500/20 border-blue-500/50 selected' 
+                      : 'bg-black/30 border-white/10 hover:bg-black/40 hover:border-white/20'
+                  }`}
+                  onClick={() => setSelectedMode('sandbox')}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  whileTap={{ scale: 0.98 }}
+                  variants={itemVariants}
+                  layout
+                >
+                  <div className="flex flex-col items-center text-center">
+                    <div className="game-mode-icon w-24 h-24 rounded-full bg-black/50 flex items-center justify-center mb-5">
+                      <svg 
+                        className="w-12 h-12 text-white" 
+                        width="512" 
+                        height="512" 
+                        viewBox="0 0 512 512" 
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                      >
+                        <path d="m0 357.7227783 247 140v-120l-247-110zm512-89.981781-247 109.981781v120l247-139.4848328zm-56.8358154 10.1654663 38.7610168-17.1413269-85.0889282-32.2471313-7.8757324 21.2828522c15.5272522 6.8700408 34.0503235 16.6861724 54.2036438 28.105606zm-97.818573-263.6292543-16.092926 45.1839714c-3.5722656 12.4966965 2.8353271 31.6537094 23.4079895 35.6736603l-26.8122559 74.8105469c-21.792511-9.1030426-41.2434082-2.8312988-52.9347229 9.8306732l-29.3911591-11.2871399-237.4623966 92.2401437 38.6854248 16.8948059c63.5622597-37.8819122 138.7563324-64.0265045 210.7644806-59.8922424l-10.43573 28.0362244c-27.3458252.8110809-50.7308655 7.6781158-71.2333374 18.9524841 71.5344849-11.513092 146.0503845 7.610199 201.1564026 35.9378357-1.3308411-6.491394-4.9849548-12.3795471-11.0791931-18.2104187l19.4934082-55.2486572c5.8800964-15.7834625 1.237915-45.6482239-35.2806091-51.0641327l26.9246826-74.5845566c25.2302856 6.3505249 40.2459106-10.0839539 43.7929382-20.9614563l14.6986694-41.8628845zm50.25531 60.6137132c-.7280273 3.0333557-6.0735474 5.5181885-10.3134766 3.6400299l-26.3297119-7.4014206c-5.1257629-2.0163651-7.1122131-5.1521301-5.4601135-9.5854416l6.1880798-17.4722404 42.9526062 12.0121307z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-3xl font-bold text-white mb-3">Sandbox</h3>
+                    <p className="text-white/70 text-lg max-w-md">
+                      Your classic sandbox experience! Spawn, build, and experiment freely with friends or on your own.
+                    </p>
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-3">Sandbox</h3>
-                  <p className="text-white/70 text-lg max-w-md">
-                    Your classic sandbox experience! Spawn, build, and experiment freely with friends or on your own.
-                  </p>
-                </div>
-              </motion.div>
-            </div>
+                </motion.div>
 
-            {/* Map Selection */}
-            <motion.div 
-              className="border border-white/10 rounded-lg overflow-hidden max-w-4xl mx-auto"
-              variants={itemVariants}
-            >
-              <h3 className="text-xl font-bold text-white p-4 bg-black/30">Select Map</h3>
-              <div className="p-12 flex items-center justify-center">
-                <p className="text-white/50 italic text-lg">No maps available yet</p>
-              </div>
-            </motion.div>
+                <motion.div
+                  className="game-mode-item p-6 rounded-lg border cursor-not-allowed opacity-60 transition-all w-[340px] bg-black/30 border-white/10"
+                  variants={itemVariants}
+                  layout
+                >
+                  <div className="relative">
+                    <div className="absolute -top-2 -right-2 bg-blue-500/80 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                      Coming Soon
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <div className="game-mode-icon w-24 h-24 rounded-full bg-black/50 flex items-center justify-center mb-5">
+                        <svg 
+                          className="w-12 h-12 text-white" 
+                          viewBox="0 0 32 32"
+                          fill="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path d="M13,2c-5,0-9,4-9,9v18c0,0.6,0.4,1,1,1h16c0.6,0,1-0.4,1-1V11C22,6,18,2,13,2z M17,14h-3v11c0,0.6-0.4,1-1,1s-1-0.4-1-1V14
+                            H9c-0.6,0-1-0.4-1-1s0.4-1,1-1h3V7c0-0.6,0.4-1,1-1s1,0.4,1,1v5h3c0.6,0,1,0.4,1,1S17.6,14,17,14z"/>
+                          <path d="M19.3,2c2.8,2,4.7,5.3,4.7,9v18c0,0.4-0.1,0.7-0.2,1H27c0.6,0,1-0.4,1-1V11C28,6.1,24.1,2.2,19.3,2z"/>
+                        </svg>
+                      </div>
+                      <h3 className="text-3xl font-bold text-white mb-3">Survival</h3>
+                      <p className="text-white/70 text-lg max-w-md">
+                        Fight endless waves of enemies with friends. Upgrade your weapons and defend your position!
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Map Selection - AnimatePresence for smooth enter/exit animations */}
+              <AnimatePresence>
+                {selectedMode && (
+                  <motion.div 
+                    className="flex-1 border border-white/10 rounded-lg overflow-hidden flex flex-col min-h-0"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <h3 className="text-xl font-bold text-white p-4 bg-black/30">Select Map</h3>
+                    <div className="flex-1 overflow-y-auto p-4">
+                      <div className="bg-black/30 border border-white/10 rounded-lg overflow-hidden cursor-pointer hover:bg-black/40 hover:border-white/20 transition-all w-72">
+                        <div className="relative aspect-[16/9]">
+                          <img 
+                            src="/images/gm_flatgrass.webp" 
+                            alt="gm_flatgrass" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="p-3">
+                          <h4 className="text-base font-semibold text-white">gm_flatgrass</h4>
+                          <p className="text-white/70 text-xs mt-0.5">The classic Garry's Mod flatgrass map</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Side Panel - Adjusted width */}
