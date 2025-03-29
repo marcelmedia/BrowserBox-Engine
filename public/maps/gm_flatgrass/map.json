@@ -1,0 +1,13 @@
+{
+  "id": "gm_flatgrass",
+  "title": "gm_flatgrass",
+  "description": "The classic Garry's Mod flatgrass map",
+  "author": "Madbox Team",
+  "version": "1.0.0",
+  "releaseDate": "2025-03-29",
+  "thumbnail": "thumbnail.webp",
+  "model": "model.glb",
+  "supports": ["sandbox", "survival"],
+  "tags": ["classic", "minimal", "open"],
+  "size": "medium"
+} 

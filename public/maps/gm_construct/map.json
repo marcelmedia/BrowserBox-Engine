@@ -1,0 +1,13 @@
+{
+  "id": "gm_construct",
+  "title": "gm_construct",
+  "description": "Another classic Garry's Mod map.",
+  "author": "Madbox Team",
+  "version": "1.0.0",
+  "releaseDate": "2025-03-29",
+  "thumbnail": "thumbnail.webp",
+  "model": "model.glb",
+  "supports": ["sandbox", "survival"],
+  "tags": ["classic", "minimal", "open"],
+  "size": "medium"
+} 

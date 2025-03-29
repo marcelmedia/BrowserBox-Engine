@@ -1,13 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Users, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MenuButton3D } from '@/components/main-menu/menu-button';
 
+// Map types
+interface MapData {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  version: string;
+  releaseDate: string;
+  thumbnail: string;
+  model: string;
+  supports: string[];
+  tags: string[];
+  size: string;
+}
+
 // Define game mode types
-type GameMode = 'sandbox';
+type GameMode = 'sandbox' | null;
 type GameType = 'singleplayer' | 'multiplayer';
 
 // Props for the GameModeSelector component
@@ -18,13 +33,42 @@ interface GameModeSelectorProps {
 export function GameModeSelector({ onClose }: GameModeSelectorProps) {
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const [selectedType, setSelectedType] = useState<GameType>('singleplayer');
+  const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [showMultiplayerOptions, setShowMultiplayerOptions] = useState(false);
+  const [maps, setMaps] = useState<MapData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [serverSettings, setServerSettings] = useState({
     name: "Server #1",
     maxPlayers: 8,
     visibility: "Public",
     password: ""
   });
+
+  // Fetch maps data
+  useEffect(() => {
+    const fetchMaps = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Use the API route to get all available maps
+        const response = await fetch('/api/maps');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch maps');
+        }
+        
+        const mapsData = await response.json();
+        setMaps(mapsData);
+      } catch (error) {
+        console.error('Error loading maps:', error);
+        setMaps([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMaps();
+  }, []);
 
   // Modal animation variants
   const modalVariants = {
@@ -167,18 +211,18 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
                 </motion.div>
 
                 <motion.div
-                  className="game-mode-item p-6 rounded-lg border cursor-not-allowed opacity-60 transition-all w-[340px] bg-black/30 border-white/10"
+                  className="game-mode-item p-6 rounded-lg border cursor-not-allowed opacity-40 transition-all w-[340px] bg-black/50 border-white/5 grayscale"
                   variants={itemVariants}
                   layout
                 >
                   <div className="relative">
-                    <div className="absolute -top-2 -right-2 bg-blue-500/80 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                    <div className="absolute -top-2 -right-2 bg-red-500/80 text-white text-xs font-semibold px-2 py-1 rounded-full">
                       Coming Soon
                     </div>
                     <div className="flex flex-col items-center text-center">
-                      <div className="game-mode-icon w-24 h-24 rounded-full bg-black/50 flex items-center justify-center mb-5">
+                      <div className="game-mode-icon w-24 h-24 rounded-full bg-black/70 flex items-center justify-center mb-5">
                         <svg 
-                          className="w-12 h-12 text-white" 
+                          className="w-12 h-12 text-white/70" 
                           viewBox="0 0 32 32"
                           fill="currentColor"
                           xmlns="http://www.w3.org/2000/svg"
@@ -188,8 +232,8 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
                           <path d="M19.3,2c2.8,2,4.7,5.3,4.7,9v18c0,0.4-0.1,0.7-0.2,1H27c0.6,0,1-0.4,1-1V11C28,6.1,24.1,2.2,19.3,2z"/>
                         </svg>
                       </div>
-                      <h3 className="text-3xl font-bold text-white mb-3">Survival</h3>
-                      <p className="text-white/70 text-lg max-w-md">
+                      <h3 className="text-3xl font-bold text-white/80 mb-3">Survival</h3>
+                      <p className="text-white/50 text-lg max-w-md">
                         Fight endless waves of enemies with friends. Upgrade your weapons and defend your position!
                       </p>
                     </div>
@@ -208,20 +252,67 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
                     <h3 className="text-xl font-bold text-white p-4 bg-black/30">Select Map</h3>
-                    <div className="flex-1 overflow-y-auto p-4">
-                      <div className="bg-black/30 border border-white/10 rounded-lg overflow-hidden cursor-pointer hover:bg-black/40 hover:border-white/20 transition-all w-72">
-                        <div className="relative aspect-[16/9]">
-                          <img 
-                            src="/images/gm_flatgrass.webp" 
-                            alt="gm_flatgrass" 
-                            className="w-full h-full object-cover"
-                          />
+                    <div className="flex-1 overflow-hidden p-4">
+                      {isLoading ? (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-white">Loading maps...</div>
                         </div>
-                        <div className="p-3">
-                          <h4 className="text-base font-semibold text-white">gm_flatgrass</h4>
-                          <p className="text-white/70 text-xs mt-0.5">The classic Garry's Mod flatgrass map</p>
+                      ) : maps.length === 0 ? (
+                        <div className="flex items-center justify-center h-full">
+                          <div className="text-white">No maps found.</div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="h-full relative">
+                          {/* Scroll indicators - only show if there are enough maps to scroll */}
+                          {maps.filter(map => !selectedMode || map.supports.includes(selectedMode)).length > 3 && (
+                            <>
+                              <div className="absolute top-1/2 right-0 -translate-y-1/2 w-12 h-full bg-gradient-to-l from-black/20 to-transparent z-10 pointer-events-none"></div>
+                              <div className="absolute top-1/2 left-0 -translate-y-1/2 w-12 h-full bg-gradient-to-r from-black/20 to-transparent z-10 pointer-events-none"></div>
+                            </>
+                          )}
+                          
+                          {/* Horizontal scrolling map container */}
+                          <div className="flex overflow-x-auto pb-4 space-x-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent px-2">
+                            {maps
+                              .filter(map => !selectedMode || map.supports.includes(selectedMode))
+                              .map(map => (
+                                <div 
+                                  key={map.id}
+                                  className={`flex-shrink-0 bg-black/30 border rounded-lg overflow-hidden cursor-pointer transition-all w-72 ${
+                                    selectedMap === map.id 
+                                      ? 'bg-blue-500/20 border-blue-500/50 transform scale-[1.02]' 
+                                      : 'border-white/10 hover:bg-black/40 hover:border-white/20 hover:transform hover:scale-[1.02]'
+                                  }`}
+                                  onClick={() => setSelectedMap(map.id)}
+                                >
+                                  <div className="relative aspect-[16/9]">
+                                    <img 
+                                      src={`/maps/${map.id}/${map.thumbnail}`} 
+                                      alt={map.title} 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <div className="p-3">
+                                    <h4 className="text-base font-semibold text-white">{map.title}</h4>
+                                    <p className="text-white/70 text-xs mt-0.5">{map.description}</p>
+                                    
+                                    {/* Author information only */}
+                                    <div className="flex items-center mt-2">
+                                      <span className="text-white/50 text-xs">By {map.author}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                          
+                          {/* No compatible maps message */}
+                          {maps.filter(map => !selectedMode || map.supports.includes(selectedMode)).length === 0 && (
+                            <div className="text-center py-10">
+                              <p className="text-white/70">No compatible maps found for {selectedMode} mode.</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 )}
@@ -365,10 +456,10 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
               </div>
             </div>
             <div className="w-28">
-              <div className={`menu-button-3d h-12 ${!selectedMode ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <div className={`menu-button-3d h-12 ${(!selectedMode || !selectedMap || !selectedType) ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 <div 
                   className="button-content-centered"
-                  onClick={() => selectedMode && console.log('Play clicked')}
+                  onClick={() => (selectedMode && selectedMap && selectedType) ? console.log('Play clicked with:', {selectedMode, selectedMap, selectedType}) : null}
                 >
                   Play
                 </div>
