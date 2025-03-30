@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Users, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MenuButton3D } from '@/components/main-menu/menu-button';
+import { LoadingScreen } from '@/components/loading-screen/loading-screen';
 
 // Map types
 interface MapData {
@@ -37,6 +38,8 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
   const [showMultiplayerOptions, setShowMultiplayerOptions] = useState(false);
   const [maps, setMaps] = useState<MapData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGameLoading, setIsGameLoading] = useState(false);
+  const [selectedMapData, setSelectedMapData] = useState<MapData | null>(null);
   const [serverSettings, setServerSettings] = useState({
     name: "Server #1",
     maxPlayers: 8,
@@ -69,6 +72,16 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
 
     fetchMaps();
   }, []);
+
+  // Set selected map data when map is selected
+  useEffect(() => {
+    if (selectedMap && maps.length > 0) {
+      const mapData = maps.find(map => map.id === selectedMap) || null;
+      setSelectedMapData(mapData);
+    } else {
+      setSelectedMapData(null);
+    }
+  }, [selectedMap, maps]);
 
   // Modal animation variants
   const modalVariants = {
@@ -130,8 +143,44 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
     setServerSettings({ ...serverSettings, [key]: value });
   };
 
+  // Handle play button click
+  const handlePlay = () => {
+    if (selectedMode && selectedMap && selectedType && selectedMapData) {
+      setIsGameLoading(true);
+      // The loading screen will handle the loading simulation
+    }
+  };
+
+  // Handle when loading is cancelled
+  const handleCancel = () => {
+    // Just set loading state back to false, which keeps the modal open
+    setIsGameLoading(false);
+  };
+
+  // Handle when loading is complete
+  const handleLoadComplete = () => {
+    console.log('Game loaded! Redirecting to game page...');
+    // Here you would navigate to the actual game page
+    // For now, we'll just close the modal after a delay
+    setTimeout(() => {
+      onClose();
+    }, 1000);
+  };
+
   return (
     <>
+      {/* Loading Screen */}
+      {isGameLoading && selectedMapData && (
+        <LoadingScreen
+          mapId={selectedMapData.id}
+          mapTitle={selectedMapData.title}
+          gameMode={selectedMode || ''}
+          gameType={selectedType}
+          onLoadComplete={handleLoadComplete}
+          onCancel={handleCancel}
+        />
+      )}
+
       {/* Modal Backdrop */}
       <motion.div 
         className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
@@ -165,11 +214,11 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
         </div>
 
         {/* Modal Content */}
-        <div className="flex flex-1 min-h-0">
+        <div className="flex flex-1 min-h-0 overflow-hidden">
           {/* Main Content */}
-          <div className="flex-1 flex flex-col min-h-0 p-6">
+          <div className="flex-1 flex flex-col min-h-0 p-6 overflow-hidden">
             {/* Game Modes Container - Using flex and justify-center/items-center for initial centering */}
-            <div className={`flex-1 flex flex-col ${!selectedMode ? 'justify-center' : ''} transition-all duration-500`}>
+            <div className={`flex-1 flex flex-col ${!selectedMode ? 'justify-center' : ''} transition-all duration-500 overflow-hidden`}>
               {/* Game Modes */}
               <motion.div 
                 className="flex justify-center gap-6 mb-8"
@@ -252,7 +301,9 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
                     transition={{ duration: 0.5, delay: 0.2 }}
                   >
                     <h3 className="text-xl font-bold text-white p-4 bg-black/30">Select Map</h3>
-                    <div className="flex-1 overflow-hidden p-4">
+                    
+                    {/* Map selection content area with fixed height to ensure scrollbar appears */}
+                    <div className="flex-1 overflow-hidden p-4 min-h-[200px]">
                       {isLoading ? (
                         <div className="flex items-center justify-center h-full">
                           <div className="text-white">Loading maps...</div>
@@ -271,14 +322,21 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
                             </>
                           )}
                           
-                          {/* Horizontal scrolling map container */}
-                          <div className="flex overflow-x-auto pb-4 space-x-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent px-2">
+                          {/* Horizontal scrolling map container - force overflow-x-auto for scrollbar */}
+                          <div 
+                            className="flex overflow-x-auto pb-4 space-x-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent px-2 snap-x" 
+                            style={{ 
+                              WebkitOverflowScrolling: 'touch',
+                              msOverflowStyle: 'none',
+                              scrollbarWidth: 'thin' 
+                            }}
+                          >
                             {maps
                               .filter(map => !selectedMode || map.supports.includes(selectedMode))
                               .map(map => (
                                 <div 
                                   key={map.id}
-                                  className={`flex-shrink-0 bg-black/30 border rounded-lg overflow-hidden cursor-pointer transition-all w-72 ${
+                                  className={`flex-shrink-0 bg-black/30 border rounded-lg overflow-hidden cursor-pointer transition-all w-72 snap-start ${
                                     selectedMap === map.id 
                                       ? 'bg-blue-500/20 border-blue-500/50 transform scale-[1.02]' 
                                       : 'border-white/10 hover:bg-black/40 hover:border-white/20 hover:transform hover:scale-[1.02]'
@@ -320,8 +378,8 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
             </div>
           </div>
 
-          {/* Side Panel - Adjusted width */}
-          <div className="w-80 bg-black/50 border-l border-white/10 p-5 overflow-y-auto">
+          {/* Side Panel - Force full height with flex-none instead of flex-shrink-0 */}
+          <div className="w-80 flex-none bg-black/50 border-l border-white/10 p-5 overflow-y-auto">
             <h3 className="text-xl font-bold text-white mb-4">Game Type</h3>
             
             <div className="space-y-3 mb-6 px-0.5">
@@ -459,7 +517,11 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
               <div className={`menu-button-3d h-12 ${(!selectedMode || !selectedMap || !selectedType) ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 <div 
                   className="button-content-centered"
-                  onClick={() => (selectedMode && selectedMap && selectedType) ? console.log('Play clicked with:', {selectedMode, selectedMap, selectedType}) : null}
+                  onClick={() => {
+                    if (selectedMode && selectedMap && selectedType) {
+                      handlePlay();
+                    }
+                  }}
                 >
                   Play
                 </div>
