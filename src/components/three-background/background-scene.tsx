@@ -1,22 +1,33 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
+import { useEffect, useState, useRef } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { 
   OrbitControls, 
   Environment, 
-  Sky
+  Sky,
+  useGLTF
 } from '@react-three/drei';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { Suspense } from 'react';
 import * as THREE from 'three';
 
+// Define a simple BackgroundCube component if it doesn't exist
+const BackgroundCube = () => {
+  return (
+    <mesh>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="blue" />
+    </mesh>
+  );
+};
+
 // Model component that loads and displays the gm_flatgrass model
-function Model() {
-  const gltf = useLoader(GLTFLoader, '/models/gm_flatgrass.glb');
+function GMFlatgrass() {
+  const { scene } = useGLTF('/models/gm_flatgrass.glb');
   
   return (
     <primitive 
-      object={gltf.scene} 
+      object={scene} 
       position={[0, 652, 0]}
       rotation={[0, 0, 0]} 
       scale={5.05} 
@@ -98,7 +109,7 @@ export function BackgroundScene() {
         
         {/* Scene content */}
         <StaticCamera />
-        <Model />
+        <GMFlatgrass />
         
         {/* Ground plane to catch shadows */}
         <mesh 

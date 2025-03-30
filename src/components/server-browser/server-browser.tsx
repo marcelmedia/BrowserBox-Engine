@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { X, Search, RefreshCw, Users, Globe, Star, Filter } from 'lucide-react';
-import { Button, MotionButton } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { MenuButton3D } from '@/components/main-menu/menu-button';
 
 // Mock server data
@@ -55,8 +55,8 @@ const MOCK_SERVERS = [
   },
 ];
 
-// Version number in the GMod format
-const VERSION = '0.0.1_prealpha_dev_280325_0058';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const VERSION = '1.0.0';
 
 interface ServerBrowserProps {
   onClose: () => void;

@@ -15,7 +15,7 @@ const BackgroundScene = dynamic(
 );
 
 // Build Version number
-const VERSION = '0.0.1_prealpha_dev_300325_0457 - Made with ❤️ by MarcelMedia';
+const VERSION = '0.0.1_prealpha_dev_300325_0524 - Made with ❤️ by MarcelMedia';
 
 export function MainMenu() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
