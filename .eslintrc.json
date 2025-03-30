@@ -3,5 +3,25 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/components/game-mode/game-mode-selector.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["src/components/server-browser/server-browser.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["src/components/three-background/background-scene.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ]
 } 

@@ -94,7 +94,7 @@ const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
             stiffness: 400, 
             damping: 15
           }}
-          {...props}
+          {...props as any}
         />
         
         {/* Add subtle interactive shine effect for glassmorphic buttons */}
