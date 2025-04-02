@@ -1,9 +1,6 @@
-'use client';
+import { GamePageClient } from './client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { GameLauncher } from '@/components/game-engine';
-
+// Server component - receives params and searchParams from Next.js
 export default function GamePage({ 
   params,
   searchParams,
@@ -11,32 +8,18 @@ export default function GamePage({
   params: { id: string };
   searchParams: Record<string, string | string[] | undefined>;
 }) {
-  const router = useRouter();
-  const [showGame, setShowGame] = useState(true);
-  
   const mapId = params.id;
-  const gameMode = (searchParams.gameMode as string) || 'sandbox';
-  const gameType = (searchParams.gameType as string) || 'singleplayer';
-  const mapTitle = (searchParams.title as string) || 'Untitled Map';
+  const gameMode = searchParams.gameMode || 'sandbox';
+  const gameType = searchParams.gameType || 'singleplayer';
+  const mapTitle = searchParams.title || 'Untitled Map';
 
-  const handleGameExit = () => {
-    setShowGame(false);
-    router.push('/'); // Navigate back to home page
-  };
-
-  if (!showGame) {
-    return null; // No need to render anything when exiting
-  }
-
+  // Pass the data to the client component
   return (
-    <main className="fixed inset-0">
-      <GameLauncher
-        mapId={mapId}
-        mapTitle={mapTitle}
-        gameMode={gameMode}
-        gameType={gameType}
-        onExit={handleGameExit}
-      />
-    </main>
+    <GamePageClient 
+      mapId={mapId}
+      mapTitle={mapTitle as string}
+      gameMode={gameMode as string}
+      gameType={gameType as string}
+    />
   );
 } 
