@@ -30,9 +30,10 @@ type GameType = 'singleplayer' | 'multiplayer';
 // Props for the GameModeSelector component
 interface GameModeSelectorProps {
   onClose: () => void;
+  onLaunchGame?: (mapId: string, mapTitle: string, gameMode: string, gameType: string) => void;
 }
 
-export function GameModeSelector({ onClose }: GameModeSelectorProps) {
+export function GameModeSelector({ onClose, onLaunchGame }: GameModeSelectorProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -152,8 +153,14 @@ export function GameModeSelector({ onClose }: GameModeSelectorProps) {
   // Handle play button click
   const handlePlay = () => {
     if (selectedMode && selectedMap && selectedType && selectedMapData) {
-      setIsGameLoading(true);
-      // The loading screen will handle the loading simulation
+      if (onLaunchGame) {
+        // If onLaunchGame prop is provided, use it to launch the game
+        onLaunchGame(selectedMapData.id, selectedMapData.title, selectedMode, selectedType);
+      } else {
+        // Otherwise fallback to the old behavior
+        setIsGameLoading(true);
+        // The loading screen will handle the loading simulation
+      }
     }
   };
 

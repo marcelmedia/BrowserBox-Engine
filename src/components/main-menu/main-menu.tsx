@@ -17,7 +17,11 @@ const BackgroundScene = dynamic(
 // Build Version number
 const VERSION = '0.0.1_prealpha_dev_300325_0541 - Made with ❤️ by MarcelMedia';
 
-export function MainMenu() {
+interface MainMenuProps {
+  onLaunchGame?: (mapId: string, mapTitle: string, gameMode: string, gameType: string) => void;
+}
+
+export function MainMenu({ onLaunchGame }: MainMenuProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showServerBrowser, setShowServerBrowser] = useState(false);
   const [showGameModeSelector, setShowGameModeSelector] = useState(false);
@@ -53,6 +57,18 @@ export function MainMenu() {
   const handleCloseGameModeSelector = () => {
     setShowGameModeSelector(false);
     setSelectedOption(null);
+  };
+
+  // Handle game launch from the game mode selector
+  const handleGameLaunch = (mapId: string, mapTitle: string, gameMode: string, gameType: string) => {
+    // Close the game mode selector
+    setShowGameModeSelector(false);
+    setSelectedOption(null);
+    
+    // Call the parent's onLaunchGame function if provided
+    if (onLaunchGame) {
+      onLaunchGame(mapId, mapTitle, gameMode, gameType);
+    }
   };
 
   const containerVariants = {
@@ -161,7 +177,10 @@ export function MainMenu() {
       {/* Game Mode Selector Modal */}
       <AnimatePresence>
         {showGameModeSelector && (
-          <GameModeSelector onClose={handleCloseGameModeSelector} />
+          <GameModeSelector 
+            onClose={handleCloseGameModeSelector} 
+            onLaunchGame={handleGameLaunch}
+          />
         )}
       </AnimatePresence>
     </div>
