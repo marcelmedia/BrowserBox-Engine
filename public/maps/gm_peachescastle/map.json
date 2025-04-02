@@ -11,17 +11,17 @@
   "tags": ["classic", "minimal", "open"],
   "size": "medium",
   "playerSettings": {
-    "walkSpeed": 4.5,
-    "sprintSpeed": 9.0,
+    "walkSpeed": 10,
+    "sprintSpeed": 20,
     "crouchSpeed": 2.0,
     "jumpForce": 14.0,
-    "headbobIntensity": 0.2,
-    "headbobSpeed": 6.0
+    "headbobIntensity": 1,
+    "headbobSpeed": 1.5
   },
   "modelAdjustments": {
-    "scale": 0.8,
-    "heightOffset": -0.5,
-    "positionX": 10,
-    "positionZ": 10
+    "scale": 15,
+    "heightOffset": 0,
+    "positionX": 0,
+    "positionZ": 0
   }
 } 
