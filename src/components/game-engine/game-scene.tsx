@@ -8,6 +8,7 @@ import { PlayerCamera } from './entities/player-camera';
 import { PlayerModel } from './entities/player-model';
 import { MapModel } from './environment/map-model';
 import { DebugOverlay } from './ui/debug-overlay';
+import { useMapData, applyPlayerSettings, applyModelAdjustments } from '../../services/map-service';
 
 // Loading fallback component with animation
 function LoadingFallback() {
@@ -42,6 +43,26 @@ function LoadingFallback() {
 export function GameScene({ mapId, gameMode, debug = false }: GameSceneProps) {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
+  
+  // Load map data including player settings and model adjustments
+  const { mapData, loading, error } = useMapData(mapId);
+  
+  // Apply map settings when map data is loaded
+  useEffect(() => {
+    if (mapData) {
+      console.log(`Applying settings for map: ${mapId}`, mapData);
+      
+      // Apply player settings if available
+      if (mapData.playerSettings) {
+        applyPlayerSettings(mapData.playerSettings);
+      }
+      
+      // Apply model adjustments if available
+      if (mapData.modelAdjustments) {
+        applyModelAdjustments(mapData.modelAdjustments);
+      }
+    }
+  }, [mapData, mapId]);
   
   // Debug logs
   useEffect(() => {
@@ -176,6 +197,16 @@ export function GameScene({ mapId, gameMode, debug = false }: GameSceneProps) {
           <mesh>
             <boxGeometry args={[0.5, 0.5, 0.5]} />
             <meshStandardMaterial color="red" />
+          </mesh>
+        </group>
+      )}
+      
+      {/* Map data loading error display */}
+      {error && debug && (
+        <group position={[0, 5, 0]}>
+          <mesh>
+            <boxGeometry args={[0.5, 0.5, 0.5]} />
+            <meshStandardMaterial color="purple" />
           </mesh>
         </group>
       )}

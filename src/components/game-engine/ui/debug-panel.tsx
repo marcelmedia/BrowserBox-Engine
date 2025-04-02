@@ -1,18 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ModelAdjustments, PlayerSettings, useMapData } from '../../../services/map-service';
 
 interface DebugPanelProps {
   visible: boolean;
   mapId: string;
   onApplyAdjustments: (adjustments: Partial<ModelAdjustments>) => void;
-}
-
-interface ModelAdjustments {
-  scale: number;
-  heightOffset: number;
-  positionX: number;
-  positionZ: number;
 }
 
 export function DebugPanel({ visible, mapId, onApplyAdjustments }: DebugPanelProps) {
@@ -26,17 +20,15 @@ export function DebugPanel({ visible, mapId, onApplyAdjustments }: DebugPanelPro
     positionZ: 0
   });
   
-  // Load adjustments from localStorage on mount
+  // Load map data to display in debug panel
+  const { mapData, loading, error } = useMapData(mapId);
+  
+  // Initialize adjustments from map data when available
   useEffect(() => {
-    try {
-      const savedAdjustments = localStorage.getItem(`model-adjustments-${mapId}`);
-      if (savedAdjustments) {
-        setModelAdjustments(JSON.parse(savedAdjustments));
-      }
-    } catch (e) {
-      console.error('Could not load model adjustments from localStorage', e);
+    if (mapData?.modelAdjustments) {
+      setModelAdjustments(mapData.modelAdjustments);
     }
-  }, [mapId]);
+  }, [mapData]);
   
   // Listen for messages from the Canvas with position updates
   useEffect(() => {
@@ -69,9 +61,10 @@ export function DebugPanel({ visible, mapId, onApplyAdjustments }: DebugPanelPro
     }
   };
   
-  // Reset adjustments to default
+  // Reset adjustments to default or to map-defined values
   const resetAdjustments = () => {
-    const defaultAdjustments = {
+    // Use map-defined values if available, otherwise use defaults
+    const defaultAdjustments = mapData?.modelAdjustments || {
       scale: 1,
       heightOffset: 0,
       positionX: 0,
@@ -172,6 +165,21 @@ export function DebugPanel({ visible, mapId, onApplyAdjustments }: DebugPanelPro
             </div>
           </div>
           
+          {/* Display Map Player Settings */}
+          {mapData?.playerSettings && (
+            <div className="mb-3 pt-3 border-t border-white/20">
+              <h4 className="text-yellow-400 mb-2">Map Player Settings</h4>
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                <div>Walk Speed: {mapData.playerSettings.walkSpeed}</div>
+                <div>Sprint Speed: {mapData.playerSettings.sprintSpeed}</div>
+                <div>Crouch Speed: {mapData.playerSettings.crouchSpeed}</div>
+                <div>Jump Force: {mapData.playerSettings.jumpForce}</div>
+                <div>Headbob Int: {mapData.playerSettings.headbobIntensity}</div>
+                <div>Headbob Speed: {mapData.playerSettings.headbobSpeed}</div>
+              </div>
+            </div>
+          )}
+          
           <div className="flex justify-between">
             <button 
               onClick={resetAdjustments}
@@ -189,7 +197,8 @@ export function DebugPanel({ visible, mapId, onApplyAdjustments }: DebugPanelPro
             <h4 className="text-orange-400 mb-2">Scene Information</h4>
             <div className="text-xs">
               <div>Map ID: {mapId}</div>
-              <div className="mt-1">Scale: {modelAdjustments.scale}</div>
+              <div className="mt-1">Map Data: {loading ? 'Loading...' : error ? 'Error loading' : 'Loaded'}</div>
+              <div>Scale: {modelAdjustments.scale}</div>
               <div>Y Position: {modelAdjustments.heightOffset}</div>
             </div>
           </div>

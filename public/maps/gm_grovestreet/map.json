@@ -9,5 +9,19 @@
   "model": "model.glb",
   "supports": ["sandbox", "survival"],
   "tags": ["classic", "minimal", "open"],
-  "size": "medium"
+  "size": "medium",
+  "playerSettings": {
+    "walkSpeed": 8.0,
+    "sprintSpeed": 12.0,
+    "crouchSpeed": 1.5,
+    "jumpForce": 8.0,
+    "headbobIntensity": 1,
+    "headbobSpeed": 1.5
+  },
+  "modelAdjustments": {
+    "scale": 15.0,
+    "heightOffset": 0,
+    "positionX": 0,
+    "positionZ": 0
+  }
 } 

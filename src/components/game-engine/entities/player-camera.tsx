@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { usePlayer } from './player-controller';
@@ -19,9 +19,15 @@ export function PlayerCamera({
   near = 0.1,
   far = 1000,
   headBobbing = true,
-  bobIntensity = 0.15,
-  bobSpeed = 8
+  bobIntensity: initialBobIntensity = 0.15,
+  bobSpeed: initialBobSpeed = 8
 }: PlayerCameraProps) {
+  // State for headbob settings that can be updated via debug panel
+  const [bobSettings, setBobSettings] = useState({
+    intensity: initialBobIntensity,
+    speed: initialBobSpeed
+  });
+  
   // Get the camera from Three.js
   const { camera } = useThree();
   
@@ -38,12 +44,37 @@ export function PlayerCamera({
   const bobRef = useRef({
     time: 0,
     prevY: 0,
-    intensity: bobIntensity
+    intensity: bobSettings.intensity
   });
   
   // Constants
   const EYE_HEIGHT = 1.7;
   const CROUCH_HEIGHT = 0.8;
+  
+  // Listen for player settings updates
+  useEffect(() => {
+    const handleSettingsUpdate = (event: MessageEvent) => {
+      if (event.data.type === 'player-settings-update') {
+        const { settings: newSettings } = event.data;
+        
+        // Update our headbob settings
+        if (newSettings.headbobIntensity !== undefined || newSettings.headbobSpeed !== undefined) {
+          setBobSettings({
+            intensity: newSettings.headbobIntensity || bobSettings.intensity,
+            speed: newSettings.headbobSpeed || bobSettings.speed
+          });
+          
+          // Update the ref value directly
+          bobRef.current.intensity = newSettings.headbobIntensity || bobSettings.intensity;
+          
+          console.log('Updated headbob settings:', newSettings.headbobIntensity, newSettings.headbobSpeed);
+        }
+      }
+    };
+    
+    window.addEventListener('message', handleSettingsUpdate);
+    return () => window.removeEventListener('message', handleSettingsUpdate);
+  }, [bobSettings]);
   
   // Set up camera parameters on mount
   useEffect(() => {
@@ -79,7 +110,7 @@ export function PlayerCamera({
         const speed = Math.sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
         
         // Update bob time based on movement speed
-        bobRef.current.time += delta * bobSpeed * speedMultiplier * (speed / 5);
+        bobRef.current.time += delta * bobSettings.speed * speedMultiplier * (speed / 5);
         
         // Calculate vertical offset using sine wave
         const verticalBob = Math.sin(bobRef.current.time * 2) * bobRef.current.intensity * speedMultiplier;

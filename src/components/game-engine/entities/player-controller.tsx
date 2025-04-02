@@ -50,20 +50,23 @@ export const usePlayer = () => {
   return context;
 };
 
-// Physics and movement constants
-const GRAVITY = -30;
-const JUMP_FORCE = 10;
-const WALK_SPEED = 5;
-const SPRINT_SPEED = 10;
-const CROUCH_SPEED = 2;
-const FRICTION = 10;
-const EYE_HEIGHT = 1.7;
-const CROUCH_HEIGHT = 0.8;
-
+// Physics and movement constants - make them state variables now
 export function PlayerController({ 
   initialPosition = [0, 2, 0],
   children 
 }: PlayerProps & { children: ReactNode }) {
+  // Movement settings (configurable through debug panel)
+  const [settings, setSettings] = useState({
+    GRAVITY: -30,
+    JUMP_FORCE: 10,
+    WALK_SPEED: 5,
+    SPRINT_SPEED: 10,
+    CROUCH_SPEED: 2,
+    FRICTION: 10,
+    EYE_HEIGHT: 1.7,
+    CROUCH_HEIGHT: 0.8
+  });
+  
   // Position and movement state
   const [position, setPosition] = useState(new THREE.Vector3(...initialPosition));
   const [velocity, setVelocity] = useState(new THREE.Vector3(0, 0, 0));
@@ -109,7 +112,7 @@ export function PlayerController({
   
   const jump = () => {
     if (isGrounded) {
-      setVelocity(prev => new THREE.Vector3(prev.x, JUMP_FORCE, prev.z));
+      setVelocity(prev => new THREE.Vector3(prev.x, settings.JUMP_FORCE, prev.z));
       setIsGrounded(false);
     }
   };
@@ -275,12 +278,12 @@ export function PlayerController({
     }
     
     // Determine movement speed based on player state
-    let currentSpeed = WALK_SPEED;
+    let currentSpeed = settings.WALK_SPEED;
     
     if (isCrouching) {
-      currentSpeed = CROUCH_SPEED;
+      currentSpeed = settings.CROUCH_SPEED;
     } else if (isRunning && moveState.forward && !moveState.backward) {
-      currentSpeed = SPRINT_SPEED;
+      currentSpeed = settings.SPRINT_SPEED;
     }
     
     // Apply movement to velocity
@@ -291,12 +294,12 @@ export function PlayerController({
     );
     
     // Apply gravity
-    newVelocity.y += GRAVITY * delta;
+    newVelocity.y += settings.GRAVITY * delta;
     
     // Apply friction to horizontal movement
     if (isGrounded) {
-      newVelocity.x *= (1 - Math.min(FRICTION * delta, 0.95));
-      newVelocity.z *= (1 - Math.min(FRICTION * delta, 0.95));
+      newVelocity.x *= (1 - Math.min(settings.FRICTION * delta, 0.95));
+      newVelocity.z *= (1 - Math.min(settings.FRICTION * delta, 0.95));
     }
     
     // Update position based on velocity
@@ -306,8 +309,8 @@ export function PlayerController({
     newPosition.y += newVelocity.y * delta;
     
     // Ground collision check
-    if (newPosition.y < EYE_HEIGHT / 2) {
-      newPosition.y = EYE_HEIGHT / 2;
+    if (newPosition.y < settings.EYE_HEIGHT / 2) {
+      newPosition.y = settings.EYE_HEIGHT / 2;
       newVelocity.y = 0;
       setIsGrounded(true);
     } else {
@@ -324,7 +327,7 @@ export function PlayerController({
       
       // Update player collider size based on crouch state
       if (playerColliderRef.current) {
-        const currentHeight = isCrouching ? CROUCH_HEIGHT : EYE_HEIGHT;
+        const currentHeight = isCrouching ? settings.CROUCH_HEIGHT : settings.EYE_HEIGHT;
         playerColliderRef.current.scale.y = currentHeight;
         playerColliderRef.current.position.y = currentHeight / 2;
       }
@@ -332,6 +335,29 @@ export function PlayerController({
     
     // Camera positioning is now handled by the PlayerCamera component
   });
+  
+  // Listen for player settings updates
+  useEffect(() => {
+    const handleSettingsUpdate = (event: MessageEvent) => {
+      if (event.data.type === 'player-settings-update') {
+        const { settings: newSettings } = event.data;
+        
+        // Update our settings based on the received values
+        setSettings(prev => ({
+          ...prev,
+          WALK_SPEED: newSettings.walkSpeed,
+          SPRINT_SPEED: newSettings.sprintSpeed,
+          CROUCH_SPEED: newSettings.crouchSpeed,
+          JUMP_FORCE: newSettings.jumpForce
+        }));
+        
+        console.log('Updated player settings:', newSettings);
+      }
+    };
+    
+    window.addEventListener('message', handleSettingsUpdate);
+    return () => window.removeEventListener('message', handleSettingsUpdate);
+  }, []);
   
   // Create the player context value
   const playerContextValue: PlayerContextType = {
@@ -355,8 +381,8 @@ export function PlayerController({
     <PlayerContext.Provider value={playerContextValue}>
       <group ref={playerRef} name="player" position={[initialPosition[0], initialPosition[1], initialPosition[2]]}>
         {/* Player collider - invisible mesh for physics */}
-        <mesh ref={playerColliderRef} visible={false} position={[0, EYE_HEIGHT / 2, 0]}>
-          <capsuleGeometry args={[0.3, EYE_HEIGHT - 0.6, 8, 8]} />
+        <mesh ref={playerColliderRef} visible={false} position={[0, settings.EYE_HEIGHT / 2, 0]}>
+          <capsuleGeometry args={[0.3, settings.EYE_HEIGHT - 0.6, 8, 8]} />
           <meshBasicMaterial color="red" wireframe />
         </mesh>
         

@@ -8,6 +8,7 @@ import { GameEngineProps } from './types/game-types';
 import { GameScene } from './game-scene';
 import { ToolUI } from './ui/tool-ui';
 import { DebugPanel } from './ui/debug-panel';
+import { PlayerDebugPanel } from './ui/player-debug-panel';
 import { useAppState } from './app-state';
 
 export function GameEngine({ mapId, gameMode, gameType, onExit }: GameEngineProps) {
@@ -273,6 +274,9 @@ export function GameEngine({ mapId, gameMode, gameType, onExit }: GameEngineProp
         mapId={mapId}
         onApplyAdjustments={handleApplyAdjustments}
       />
+      
+      {/* Player Debug Panel */}
+      <PlayerDebugPanel visible={showDebugInfo} />
       
       {/* Help overlay */}
       {showHelpOverlay && (

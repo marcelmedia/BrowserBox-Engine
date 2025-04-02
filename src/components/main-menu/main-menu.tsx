@@ -15,7 +15,7 @@ const BackgroundScene = dynamic(
 );
 
 // Build Version number
-const VERSION = '0.0.1_prealpha_dev_300325_0541 - Made with ❤️ by MarcelMedia';
+const VERSION = '0.0.1_prealpha_dev_020425_0458 - Made with ❤️ by MarcelMedia';
 
 interface MainMenuProps {
   onLaunchGame?: (mapId: string, mapTitle: string, gameMode: string, gameType: string) => void;
